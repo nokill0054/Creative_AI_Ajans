@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Engine Pro | AI Content Agency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-deep: #0b0f1a;
+            --bg-sidebar: #111827;
+            --bg-card: rgba(17, 24, 39, 0.6);
+            --accent: #6d28d9;
+            --accent-pink: #ec4899;
+            --accent-blue: #2563eb;
+            --accent-hover: #7c3aed;
+            --accent-glow: rgba(109, 40, 217, 0.3);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 320px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        .branding {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            background: var(--bg-sidebar);
+            z-index: 10;
+        }
+        .branding h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            margin: 0;
+            background: linear-gradient(to right, #fff, #9ca3af);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-section { padding: 16px 24px; border-bottom: 1px solid var(--border); }
+        .section-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .price-badge-container {
+            background: rgba(37, 99, 235, 0.15);
+            border: 1px solid var(--accent-blue);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            margin: 10px 0 20px 0;
+        }
+        .price-value { font-size: 24px; font-weight: 700; font-family: 'Outfit'; color: #fff; display: block; }
+        .price-label { font-size: 10px; color: var(--text-muted); }
+
+        .control-group { margin-bottom: 12px; }
+        .control-group label { display: block; font-size: 12px; margin-bottom: 6px; color: #d1d5db; }
+        
+        select, input {
+            width: 100%;
+            background: #030712;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 10px;
+            color: white;
+            font-family: inherit;
+            font-size: 12px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        select:focus, input:focus { border-color: var(--accent-pink); box-shadow: 0 0 0 1px var(--accent-pink); }
+
+        /* Style Info Card */
+        .style-info {
+            background: rgba(30, 58, 138, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+        .style-desc { font-size: 11px; color: #fff; margin-bottom: 4px; display: block; line-height: 1.4; }
+        .style-prompt { font-size: 10px; color: #10b981; font-family: monospace; }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 0;
+            color: #fff;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        /* --- Main Content --- */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: radial-gradient(circle at top right, #1e1b4b 0%, #0b0f1a 100%);
+            overflow-y: auto;
+        }
+
+        .tabs-header {
+            padding: 0 40px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(11, 15, 26, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        .tab-link {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 18px 4px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-link.active { color: white; border-bottom-color: var(--accent-pink); }
+
+        .container {
+            padding: 32px 40px;
+            max-width: 1210px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .top-hero { margin-bottom: 24px; }
+        .top-hero h2 { font-family: 'Outfit'; font-size: 28px; margin: 0 0 4px 0; color: #fff; }
+        .top-hero p { color: var(--text-muted); font-size: 12px; margin: 0; }
+
+        .pro-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 32px;
+        }
+
+        .workspace {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+        }
+
+        .input-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .prompt-container {
+            background: #030712;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: inherit;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            min-height: 90px;
+        }
+
+        .upload-card {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(0,0,0,0.1);
+        }
+        .upload-card:hover { border-color: var(--accent-pink); }
+
+        .btn-produce {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .btn-produce:hover { transform: translateY(-1px); box-shadow: 0 4px 12px var(--accent-glow); }
+
+        .result-stage {
+            background: rgba(31, 41, 55, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="branding">
+            <i data-lucide="zap" fill="currentColor" style="color: var(--accent)"></i>
+            <h1>Creative Engine</h1>
+        </div>
+
+        <div class="sidebar-section">
+            <span class="section-title">Settings</span>
+            <div class="control-group">
+                <label>Model</label>
+                <select id="modelSelect" onchange="updatePrice()"></select>
+            </div>
+            <div class="control-group">
+                <label>Provider</label>
+                <select id="providerSelect"><option value="kie">Kie AI</option><option value="google">Google AI Studio</option></select>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <span class="section-title">Style</span>
+            <div class="control-group">
+                <select id="styleSelect" onchange="updateStyleInfo()"></select>
+            </div>
+            <div id="styleCard" class="style-info">
+                <span class="style-desc" id="styleDesc">Real-world photography with natural lighting</span>
+                <span class="style-prompt" id="stylePrompt">A photorealistic...</span>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="control-group">
+                    <label>Ratio</label>
+                    <select id="ratioSelect"><option>1:1 Square</option><option>9:16 Vertical</option><option>16:9 Wide</option></select>
+                </div>
+                <div class="control-group">
+                    <label>Quality</label>
+                    <select id="qualitySelect"><option>1K</option><option>2K</option><option>4K</option></select>
+                </div>
+            </div>
+            <div class="price-badge-container">
+                <span class="price-value" id="priceVal">$0.09</span>
+                <span class="price-label">per image</span>
+            </div>
+        </div>
+
+        <div class="sidebar-section" style="border-bottom: none">
+            <div class="accordion-header" onclick="toggleAdvanced()">
+                <span>Advanced Prompt Controls</span>
+                <i data-lucide="chevron-down" id="advChevron"></i>
+            </div>
+            <div id="advancedControls" style="display: block; padding-top: 8px;"></div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="tabs-header">
+            <div class="tab-link active">Create</div>
+            <div class="tab-link">Batch</div>
+            <div class="tab-link">Gallery</div>
+            <div class="tab-link">History</div>
+        </div>
+
+        <div class="container">
+            <div class="top-hero">
+                <h2>Creative Engine</h2>
+                <p>AI image generation with intelligent prompt enhancement</p>
+            </div>
+
+            <div class="pro-grid">
+                <div class="workspace">
+                    <span class="section-title">Quick Presets</span>
+                    <select id="presetSelect" style="margin-bottom: 20px;"><option>— None —</option></select>
+
+                    <div class="input-title-row">
+                        <span class="section-title">Prompt <i data-lucide="link" size="12" style="margin-left: 4px; vertical-align: middle"></i></span>
+                        <span class="section-title" i">Result</span>
+                    </div>
+
+                    <div class="prompt-container">
+                        <textarea id="promptInput" placeholder="Describe your image..." oninput="syncCounter()"></textarea>
+                        <div style="text-align: right; font-size: 10px; color: var(--text-muted);" id="charCount">0 characters</div>
+                    </div>
+
+                    <span class="section-title">Exclude (optional)</span>
+                    <input type="text" id="negativeInput" placeholder="blurry, watermark, text, low quality, deformed..." style="margin-bottom: 20px;">
+
+                    <span class="section-title">Reference image (optional)</span>
+                    <div class="upload-card">
+                        <i data-lucide="upload-cloud" size="24" style="color: var(--accent-pink)"></i>
+                        <div style="text-align: left; flex: 1">
+                            <div style="font-weight: 600; font-size: 12px; color: #fff;">Drag and drop file here</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">Limit 200MB per file • JPG, JPEG, PNG</div>
+                        </div>
+                        <button style="background: #374151; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 10px; cursor: pointer;">Browse files</button>
+                    </div>
+
+                    <button class="btn-produce" onclick="produce()">Generate Image</button>
+                </div>
+
+                <div class="result-stage">
+                    <i data-lucide="image" size="32" style="opacity: 0.2; margin-bottom: 8px;"></i>
+                    <span style="font-size: 12px;">Result Panel</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let engineConfig = {};
+
+        async function init() {
+            const res = await fetch('/api/config');
+            engineConfig = await res.json();
+            
+            const mSel = document.getElementById('modelSelect');
+            engineConfig.image_models.forEach(m => mSel.innerHTML += `<option value="${m.id}">${m.name}</option>`);
+
+            const sSel = document.getElementById('styleSelect');
+            engineConfig.styles.forEach(s => sSel.innerHTML += `<option value="${s.id}">${s.name}</option>`);
+
+            const pSel = document.getElementById('presetSelect');
+            engineConfig.presets.forEach(p => pSel.innerHTML += `<option value="${p.id}">${p.name}</option>`);
+
+            const adv = document.getElementById('advancedControls');
+            for (const [key, options] of Object.entries(engineConfig.advanced_controls)) {
+                let html = `<div class="control-group"><label>${key.replace('_', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</label><select id="adv_${key}">`;
+                options.forEach(opt => html += `<option value="${opt}">${opt}</option>`);
+                html += `</select></div>`;
+                adv.innerHTML += html;
+            }
+
+            lucide.createIcons();
+            updateStyleInfo();
+            updatePrice();
+        }
+
+        function updateStyleInfo() {
+            const styleId = document.getElementById('styleSelect').value;
+            const style = engineConfig.styles.find(s => s.id === styleId);
+            document.getElementById('styleDesc').innerText = style.desc;
+            document.getElementById('stylePrompt').innerText = style.prompt;
+        }
+
+        function updatePrice() {
+            const modelId = document.getElementById('modelSelect').value;
+            const model = engineConfig.image_models.find(m => m.id === modelId);
+            document.getElementById('priceVal').innerText = `$${model.cost.toFixed(2)}`;
+        }
+
+        function toggleAdvanced() {
+            const adv = document.getElementById('advancedControls');
+            const isOpen = adv.style.display === 'block';
+            adv.style.display = isOpen ? 'none' : 'block';
+            document.getElementById('advChevron').style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
+        function syncCounter() {
+            document.getElementById('charCount').innerText = `${document.getElementById('promptInput').value.length} characters`;
+        }
+
+        async function produce() {
+            alert("Production Started! Processing logic live on server port 5052.");
+        }
+
+        init();
+    </script>
+</body>
+</html>
