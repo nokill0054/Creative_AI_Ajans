@@ -773,11 +773,20 @@
             status.innerText = "Syncing with Airtable & Handshaking with Cloud Providers...";
             lucide.createIcons();
 
+            const formData = new FormData();
+            for (const key in payload) {
+                if (payload[key] !== undefined && payload[key] !== null) {
+                    formData.append(key, payload[key]);
+                }
+            }
+            if (selectedFiles && selectedFiles.length > 0) {
+                selectedFiles.forEach(f => formData.append('reference_files', f));
+            }
+
             try {
                 const res = await fetch('/api/produce', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: formData
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
@@ -843,9 +852,19 @@
                         stage.innerHTML = html + statusLine;
                     }
 
-                    // Stop polling if everything is done
-                    const imgDone = !imgStatus || imgStatus === 'Generated' || imgStatus === 'Failed' || imgStatus.includes('Failed');
-                    const vidDone = !vidStatus || vidStatus === 'Generated' || vidStatus === 'Failed' || vidStatus.includes('Failed');
+                    const imgFailed = imgStatus && imgStatus.includes('Failed');
+                    const vidFailed = vidStatus && vidStatus.includes('Failed');
+                    
+                    if (imgFailed || vidFailed) {
+                        clearInterval(interval);
+                        const reason = imgFailed ? imgStatus : vidStatus;
+                        stage.innerHTML = `<span style="color: #ef4444; font-size: 13px;">❌ Production Failed (${reason})</span>`;
+                        return;
+                    }
+
+                    // Stop polling if successfully done
+                    const imgDone = !imgStatus || imgStatus === 'Generated';
+                    const vidDone = !vidStatus || vidStatus === 'Generated';
                     if (imgDone && vidDone && (data.image_url || data.video_url)) {
                         clearInterval(interval);
                     }

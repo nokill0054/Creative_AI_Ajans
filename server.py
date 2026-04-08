@@ -360,7 +360,12 @@ def produce_endpoint():
     Unified production endpoint.
     mode: "image" | "video" | "image+video"
     """
-    data = request.json
+    is_form = request.content_type and request.content_type.startswith('multipart/form-data')
+    if is_form:
+        data = request.form.to_dict()
+    else:
+        data = request.json or {}
+        
     mode = data.get('mode', 'image')  # image | video | image+video
     
     try:
@@ -402,19 +407,46 @@ def produce_endpoint():
         record = airtable.create_record(record_fields)
         record_id = record["id"]
         
+        # Handle uploaded files
+        local_paths = None
+        source_image_url = None
+        if is_form and request.files:
+            file_list = request.files.getlist('reference_files')
+            if file_list:
+                import os
+                from pathlib import Path
+                from werkzeug.utils import secure_filename
+                
+                temp_dir = Path('/tmp/creative_engine_uploads')
+                temp_dir.mkdir(parents=True, exist_ok=True)
+                local_paths = []
+                for f in file_list:
+                    if f.filename:
+                        p = temp_dir / secure_filename(f.filename)
+                        f.save(str(p))
+                        local_paths.append(str(p))
+                
+                if local_paths and mode in ('video', 'image+video'):
+                    try:
+                        # Upload to Kie AI to get public URLs for the video generator as reference
+                        uploaded_urls = kie_upload.upload_references(local_paths)
+                        if uploaded_urls:
+                            source_image_url = uploaded_urls[0]
+                    except Exception as e:
+                        print(f"File upload error: {e}")
+        
         # --- Background Generation ---
         def run_production():
             try:
                 if mode == 'image':
-                    _run_image_gen(record, model, provider)
+                    _run_image_gen(record, model, provider, reference_paths=local_paths)
                     
                 elif mode == 'video':
-                    # Video-only: need an existing image URL or skip
-                    _run_video_gen(record, video_model, provider, video_duration, video_quality)
+                    _run_video_gen(record, video_model, provider, video_duration, video_quality, source_image_url=source_image_url)
                     
                 elif mode == 'image+video':
                     # Step 1: Generate image
-                    _run_image_gen(record, model, provider)
+                    _run_image_gen(record, model, provider, reference_paths=local_paths)
                     
                     # Step 2: Re-fetch record to get generated image URL
                     time.sleep(2)
@@ -448,12 +480,12 @@ def produce_endpoint():
         return jsonify({"error": str(e)}), 500
 
 
-def _run_image_gen(record, model, provider):
+def _run_image_gen(record, model, provider, reference_paths=None):
     """Run image generation for a record."""
     record_id = record["id"]
     try:
         airtable.update_record(record_id, {"Image Status": "Processing"})
-        image_gen.generate_batch([record], model=model, provider=provider, num_variations=1)
+        image_gen.generate_batch([record], model=model, provider=provider, num_variations=1, reference_paths=reference_paths)
     except Exception as e:
         print(f"Image generation error: {e}")
         error_msg = str(e).lower()
@@ -461,14 +493,15 @@ def _run_image_gen(record, model, provider):
         airtable.update_record(record_id, {"Image Status": final_status})
 
 
-def _run_video_gen(record, video_model, provider, duration="5", quality="pro"):
+def _run_video_gen(record, video_model, provider, duration="5", quality="pro", source_image_url=None):
     """Run video generation for a record."""
     record_id = record["id"]
     try:
         airtable.update_record(record_id, {"Video Status": "Processing"})
         video_gen.generate_for_record(
             record, model=video_model, duration=duration,
-            num_variations=1, mode=quality
+            num_variations=1, mode=quality, source_image_url=source_image_url,
+            provider=provider
         )
     except Exception as e:
         print(f"Video generation error: {e}")

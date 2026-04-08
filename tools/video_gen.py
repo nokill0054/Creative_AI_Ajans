@@ -86,7 +86,7 @@ def generate_ugc_video(prompt, image_url=None, model=None, duration="5",
 
 def generate_for_record(record, model=None, duration="5", preferred_image=None,
                         num_variations=2, provider=None, aspect_ratio="9:16",
-                        mode="pro"):
+                        mode="pro", source_image_url=None):
     """
     Generate video variations for a single Airtable record.
 
@@ -107,10 +107,10 @@ def generate_for_record(record, model=None, duration="5", preferred_image=None,
     fields = record.get("fields", {})
     ad_name = fields.get("Ad Name", "untitled")
 
-    image_url = _get_image_url(fields, preferred_image=preferred_image)
-    if not image_url:
-        print_status(f"Skipping '{ad_name}' - no Generated Image", "!!")
-        return None
+    image_url = source_image_url or _get_image_url(fields, preferred_image=preferred_image)
+    
+    # We no longer strictly block generation if image_url is missing,
+    # because Kling 3.0, Veo 3.1 and Sora 2 all support text-to-video out-of-the-box.
 
     video_prompt = fields.get("Video Prompt", "")
     if not video_prompt:
