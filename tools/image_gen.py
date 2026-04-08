@@ -23,6 +23,12 @@ _MODEL_DISPLAY_NAMES = {
     "nano-banana": "Nano Banana",
     "nano-banana-pro": "Nano Banana Pro",
     "gpt-image-1.5": "GPT Image 1.5",
+    "flux-1.1-pro": "Flux 1.1 Pro",
+    "flux-dev": "Flux Dev",
+    "midjourney-v6.1": "Midjourney v6.1",
+    "recraft-v3": "Recraft V3",
+    "dalle-3": "DALL-E 3",
+    "ideogram-v2": "Ideogram v2",
 }
 
 # Reverse mapping: Airtable display name -> internal model name
@@ -273,6 +279,9 @@ def generate_batch(records, reference_paths=None, model=None, provider=None,
     submissions = []
 
     for record in actionable:
+        # Inform Airtable that work has started
+        update_record(record["id"], {"Image Status": "Processing"})
+        
         fields = record.get("fields", {})
         ad_name = fields.get("Ad Name", "untitled")
         prompt = fields.get("Image Prompt", "")
@@ -368,6 +377,10 @@ def generate_batch(records, reference_paths=None, model=None, provider=None,
             update_fields["Image Model"] = _MODEL_DISPLAY_NAMES.get(rec_model, rec_model)
             update_record(rid, update_fields)
             print_status(f"Airtable updated for '{ad_name}'", "OK")
+        elif not record_ok:
+            # Entirely failed record
+            update_record(rid, {"Image Status": "Failed"})
+            print_status(f"Airtable updated: '{ad_name}' marked as FAILED", "XX")
 
         if record_ok:
             succeeded += 1

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creative Engine Pro | AI Content Agency</title>
+    <title>Creative Engine Pro | Expert Production Suite</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,7 +35,7 @@
 
         /* --- Sidebar --- */
         .sidebar {
-            width: 320px;
+            width: 330px;
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border);
             display: flex;
@@ -76,6 +76,20 @@
             display: block;
         }
 
+        .advanced-group-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #d1d5db;
+            margin: 16px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .advanced-group-title i { color: var(--accent-pink); }
+        .advanced-group-content { padding-left: 4px; border-left: 1px solid rgba(236, 72, 153, 0.2); margin-bottom: 20px; }
+
         .price-badge-container {
             background: rgba(37, 99, 235, 0.15);
             border: 1px solid var(--accent-blue);
@@ -88,9 +102,9 @@
         .price-label { font-size: 10px; color: var(--text-muted); }
 
         .control-group { margin-bottom: 12px; }
-        .control-group label { display: block; font-size: 12px; margin-bottom: 6px; color: #d1d5db; }
+        .control-group label { display: block; font-size: 11px; margin-bottom: 6px; color: #d1d5db; }
         
-        select, input {
+        select, input[type="text"] {
             width: 100%;
             background: #030712;
             border: 1px solid var(--border);
@@ -101,10 +115,10 @@
             font-size: 12px;
             outline: none;
             transition: all 0.2s;
+            box-sizing: border-box;
         }
-        select:focus, input:focus { border-color: var(--accent-pink); box-shadow: 0 0 0 1px var(--accent-pink); }
+        select:focus, input[type="text"]:focus { border-color: var(--accent-pink); box-shadow: 0 0 0 1px var(--accent-pink); }
 
-        /* Style Info Card */
         .style-info {
             background: rgba(30, 58, 138, 0.3);
             border: 1px solid rgba(59, 130, 246, 0.3);
@@ -122,7 +136,7 @@
             cursor: pointer;
             padding: 10px 0;
             color: #fff;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 12px;
         }
 
@@ -161,15 +175,11 @@
 
         .container {
             padding: 32px 40px;
-            max-width: 1210px;
+            max-width: 1240px;
             margin: 0 auto;
             width: 100%;
             box-sizing: border-box;
         }
-
-        .top-hero { margin-bottom: 24px; }
-        .top-hero h2 { font-family: 'Outfit'; font-size: 28px; margin: 0 0 4px 0; color: #fff; }
-        .top-hero p { color: var(--text-muted); font-size: 12px; margin: 0; }
 
         .pro-grid {
             display: grid;
@@ -208,7 +218,8 @@
             font-size: 14px;
             resize: none;
             outline: none;
-            min-height: 90px;
+            min-height: 80px;
+            box-sizing: border-box;
         }
 
         .upload-card {
@@ -217,39 +228,166 @@
             padding: 20px;
             text-align: center;
             cursor: pointer;
-            margin-bottom: 24px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 16px;
             background: rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
-        .upload-card:hover { border-color: var(--accent-pink); }
+        .upload-card:hover { border-color: var(--accent-pink); background: rgba(236, 72, 153, 0.05); }
+        .upload-card.drag-over { border-color: var(--accent-pink); background: rgba(236, 72, 153, 0.1); transform: scale(1.01); }
+
+        .file-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .file-preview-item {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #030712;
+            animation: fadeInScale 0.25s ease;
+        }
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .file-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .file-preview-item .file-icon-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            font-size: 9px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 4px;
+            word-break: break-all;
+        }
+        .file-preview-remove {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .file-preview-item:hover .file-preview-remove { opacity: 1; }
+
+        /* --- Production Mode Toggle --- */
+        .mode-toggle {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 10px 8px;
+            background: #030712;
+            color: var(--text-muted);
+            border: none;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .mode-btn:not(:last-child) { border-right: 1px solid var(--border); }
+        .mode-btn.active {
+            background: linear-gradient(135deg, rgba(109, 40, 217, 0.3), rgba(236, 72, 153, 0.2));
+            color: white;
+            box-shadow: inset 0 -2px 0 var(--accent-pink);
+        }
+        .mode-btn:hover:not(.active) { background: rgba(255,255,255,0.03); color: #d1d5db; }
+
+        /* --- Video Section --- */
+        .video-section {
+            display: none;
+            animation: fadeInScale 0.3s ease;
+        }
+        .video-section.visible { display: block; }
 
         .btn-produce {
             background: var(--accent);
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
             transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .btn-produce:hover { transform: translateY(-1px); box-shadow: 0 4px 12px var(--accent-glow); }
+        .btn-produce:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         .result-stage {
             background: rgba(31, 41, 55, 0.2);
             border: 1px solid var(--border);
             border-radius: 12px;
-            height: 100%;
+            min-height: 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: var(--text-muted);
+            padding: 20px;
         }
+        .result-stage video, .result-stage img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        /* --- Poller Status --- */
+        .poller-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(16, 185, 129, 0.08);
+            border-top: 1px solid rgba(16, 185, 129, 0.15);
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        .poller-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+        .poller-dot.off { background: #6b7280; animation: none; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
     </style>
 </head>
@@ -261,42 +399,72 @@
         </div>
 
         <div class="sidebar-section">
-            <span class="section-title">Settings</span>
+            <span class="section-title">Global Settings</span>
             <div class="control-group">
-                <label>Model</label>
+                <label>Image Model</label>
                 <select id="modelSelect" onchange="updatePrice()"></select>
             </div>
             <div class="control-group">
-                <label>Provider</label>
-                <select id="providerSelect"><option value="kie">Kie AI</option><option value="google">Google AI Studio</option></select>
+                <label>Compute Provider</label>
+                <select id="providerSelect"><option value="kie">Kie AI (Global)</option><option value="google">Google AI Studio</option></select>
+            </div>
+        </div>
+
+        <!-- Video Model Section -->
+        <div class="sidebar-section" id="videoModelSection">
+            <span class="section-title">Video Settings</span>
+            <div class="control-group">
+                <label>Video Model</label>
+                <select id="videoModelSelect">
+                    <option value="veo-3.1">Veo 3.1 (Google)</option>
+                    <option value="kling-3.0">Kling 3.0 (WaveSpeed)</option>
+                    <option value="sora-2-pro">Sora 2 Pro (WaveSpeed)</option>
+                </select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="control-group">
+                    <label>Duration</label>
+                    <select id="videoDuration">
+                        <option value="5">5 seconds</option>
+                        <option value="10">10 seconds</option>
+                        <option value="15">15 seconds</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Quality</label>
+                    <select id="videoQuality">
+                        <option value="pro">Pro</option>
+                        <option value="std">Standard</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <div class="sidebar-section">
-            <span class="section-title">Style</span>
+            <span class="section-title">Visual Style</span>
             <div class="control-group">
                 <select id="styleSelect" onchange="updateStyleInfo()"></select>
             </div>
             <div id="styleCard" class="style-info">
-                <span class="style-desc" id="styleDesc">Real-world photography with natural lighting</span>
-                <span class="style-prompt" id="stylePrompt">A photorealistic...</span>
+                <span class="style-desc" id="styleDesc">Initializing style engine...</span>
+                <span class="style-prompt" id="stylePrompt">—</span>
             </div>
         </div>
 
         <div class="sidebar-section">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <div class="control-group">
-                    <label>Ratio</label>
+                    <label>Aspect Ratio</label>
                     <select id="ratioSelect"><option>1:1 Square</option><option>9:16 Vertical</option><option>16:9 Wide</option></select>
                 </div>
                 <div class="control-group">
-                    <label>Quality</label>
-                    <select id="qualitySelect"><option>1K</option><option>2K</option><option>4K</option></select>
+                    <label>Resolution</label>
+                    <select id="qualitySelect"><option>1K (Standard)</option><option>2K (Pro)</option><option>4K (Master)</option></select>
                 </div>
             </div>
             <div class="price-badge-container">
-                <span class="price-value" id="priceVal">$0.09</span>
-                <span class="price-label">per image</span>
+                <span class="price-value" id="priceVal">$0.00</span>
+                <span class="price-label">estimated production cost</span>
             </div>
         </div>
 
@@ -305,58 +473,118 @@
                 <span>Advanced Prompt Controls</span>
                 <i data-lucide="chevron-down" id="advChevron"></i>
             </div>
-            <div id="advancedControls" style="display: block; padding-top: 8px;"></div>
+            <div id="advancedControls" style="display: block; padding-top: 8px;">
+                <!-- Populated by JS with Expert Categories -->
+            </div>
+        </div>
+
+        <!-- Poller Status Bar -->
+        <div class="poller-bar" id="pollerBar">
+            <div class="poller-dot" id="pollerDot"></div>
+            <span id="pollerStatus">Airtable Poller: Starting...</span>
+            <div style="flex:1"></div>
+            <button onclick="togglePoller()" id="pollerToggleBtn" style="background: none; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 2px 6px; border-radius: 3px; font-size: 9px; cursor: pointer;">Pause</button>
         </div>
     </div>
 
     <div class="main">
         <div class="tabs-header">
             <div class="tab-link active">Create</div>
-            <div class="tab-link">Batch</div>
-            <div class="tab-link">Gallery</div>
-            <div class="tab-link">History</div>
+            <div class="tab-link">Batch Produce</div>
+            <div class="tab-link">Live Gallery</div>
+            <div class="tab-link">Production History</div>
         </div>
 
         <div class="container">
-            <div class="top-hero">
-                <h2>Creative Engine</h2>
-                <p>AI image generation with intelligent prompt enhancement</p>
+            <div style="margin-bottom: 24px;">
+                <h2 style="font-family: 'Outfit'; font-size: 32px; margin: 0 0 4px 0; color: #fff;">Creative Hub</h2>
+                <p style="color: var(--text-muted); font-size: 13px; margin: 0;">Configure your expert production parameters below.</p>
             </div>
 
             <div class="pro-grid">
                 <div class="workspace">
-                    <span class="section-title">Quick Presets</span>
-                    <select id="presetSelect" style="margin-bottom: 20px;"><option>— None —</option></select>
+                    <span class="section-title">Production Presets</span>
+                    <select id="presetSelect" style="margin-bottom: 20px;"><option>— None Selection —</option></select>
 
-                    <div class="input-title-row">
-                        <span class="section-title">Prompt <i data-lucide="link" size="12" style="margin-left: 4px; vertical-align: middle"></i></span>
-                        <span class="section-title" i">Result</span>
+                    <!-- Production Mode Toggle -->
+                    <span class="section-title">Production Mode</span>
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" data-mode="image" onclick="setMode('image')">
+                            <i data-lucide="image" size="14"></i> Image Only
+                        </button>
+                        <button class="mode-btn" data-mode="video" onclick="setMode('video')">
+                            <i data-lucide="film" size="14"></i> Video Only
+                        </button>
+                        <button class="mode-btn" data-mode="image+video" onclick="setMode('image+video')">
+                            <i data-lucide="layers" size="14"></i> Image + Video
+                        </button>
                     </div>
 
-                    <div class="prompt-container">
-                        <textarea id="promptInput" placeholder="Describe your image..." oninput="syncCounter()"></textarea>
-                        <div style="text-align: right; font-size: 10px; color: var(--text-muted);" id="charCount">0 characters</div>
+                    <!-- Image Prompt Section -->
+                    <div id="imagePromptSection">
+                        <div class="input-title-row">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="section-title" style="margin-bottom: 0;">Image Prompt</span>
+                                <button onclick="enhancePrompt()" id="enhanceBtn" style="background: rgba(109, 40, 217, 0.2); border: 1px solid var(--accent); color: #a78bfa; padding: 2px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                    <i data-lucide="sparkles" size="10"></i> Enhance
+                                </button>
+                            </div>
+                        </div>
+                        <div class="prompt-container">
+                            <textarea id="promptInput" placeholder="A photorealistic cinematic shot of a luxury watch on a velvet surface, Arri Alexa, God Rays..." oninput="syncCounter()"></textarea>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                                <div style="font-size: 10px; color: var(--text-muted);" id="charCount">0 characters</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <span class="section-title">Exclude (optional)</span>
-                    <input type="text" id="negativeInput" placeholder="blurry, watermark, text, low quality, deformed..." style="margin-bottom: 20px;">
+                    <!-- Enhanced Preview Area -->
+                    <div id="enhancedResultContainer" style="display: none; margin-bottom: 20px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span class="section-title" style="color: #10b981; margin: 0;">AI Enhanced Preview</span>
+                            <button onclick="applyEnhanced()" style="background: #10b981; color: white; border: none; padding: 2px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; font-weight: 600;">Apply to Production</button>
+                        </div>
+                        <div id="enhancedText" style="font-size: 12px; color: #d1d5db; line-height: 1.5; font-style: italic;"></div>
+                    </div>
 
-                    <span class="section-title">Reference image (optional)</span>
-                    <div class="upload-card">
+                    <!-- Video Prompt Section -->
+                    <div id="videoPromptSection" class="video-section">
+                        <div class="input-title-row">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="section-title" style="margin-bottom: 0;">Video Prompt</span>
+                                <span style="font-size: 9px; color: var(--accent-pink); background: rgba(236,72,153,0.1); padding: 2px 6px; border-radius: 3px;">Describes motion & action</span>
+                            </div>
+                        </div>
+                        <div class="prompt-container">
+                            <textarea id="videoPromptInput" placeholder="Camera slowly dollies in, product rotates 180 degrees, light rays shift from left to right, gentle particle effects float in the air..." oninput="syncVideoCounter()"></textarea>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                                <div style="font-size: 10px; color: var(--text-muted);" id="videoCharCount">0 characters</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <span class="section-title">Negative Parameters (Optional)</span>
+                    <input type="text" id="negativeInput" placeholder="blurry, low quality, watermark, text, deformed hands..." style="margin-bottom: 24px;">
+
+                    <span class="section-title">Input References (Optional)</span>
+                    <input type="file" id="refFileInput" multiple accept="image/*,video/*,.pdf" style="display: none;" onchange="handleFileSelect(event)">
+                    <div class="upload-card" id="uploadCard" onclick="document.getElementById('refFileInput').click()">
                         <i data-lucide="upload-cloud" size="24" style="color: var(--accent-pink)"></i>
                         <div style="text-align: left; flex: 1">
-                            <div style="font-weight: 600; font-size: 12px; color: #fff;">Drag and drop file here</div>
-                            <div style="font-size: 10px; color: var(--text-muted);">Limit 200MB per file • JPG, JPEG, PNG</div>
+                            <div style="font-weight: 600; font-size: 12px; color: #fff;">Drag & Drop Reference Artifacts</div>
+                            <div style="font-size: 10px; color: var(--text-muted);" id="uploadHint">Max 200MB • AI will analyze visual context</div>
                         </div>
-                        <button style="background: #374151; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 10px; cursor: pointer;">Browse files</button>
+                        <button onclick="event.stopPropagation(); document.getElementById('refFileInput').click()" style="background: #374151; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 10px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#4b5563'" onmouseout="this.style.background='#374151'">Browse</button>
                     </div>
+                    <div class="file-preview-container" id="filePreviewContainer"></div>
 
-                    <button class="btn-produce" onclick="produce()">Generate Image</button>
+                    <button class="btn-produce" id="genBtn" onclick="produce()">Initiate Production</button>
+                    <p id="statusMsg" style="text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 16px;"></p>
                 </div>
 
-                <div class="result-stage">
-                    <i data-lucide="image" size="32" style="opacity: 0.2; margin-bottom: 8px;"></i>
-                    <span style="font-size: 12px;">Result Panel</span>
+                <div class="result-stage" id="resultStage">
+                    <i data-lucide="image" size="40" style="opacity: 0.1; margin-bottom: 12px;"></i>
+                    <span style="font-size: 13px; opacity: 0.5;">Awaiting Render...</span>
                 </div>
             </div>
         </div>
@@ -364,44 +592,133 @@
 
     <script>
         let engineConfig = {};
+        let currentMode = 'image'; // 'image' | 'video' | 'image+video'
 
-        async function init() {
-            const res = await fetch('/api/config');
-            engineConfig = await res.json();
-            
-            const mSel = document.getElementById('modelSelect');
-            engineConfig.image_models.forEach(m => mSel.innerHTML += `<option value="${m.id}">${m.name}</option>`);
+        // --- Mode Toggle ---
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
 
-            const sSel = document.getElementById('styleSelect');
-            engineConfig.styles.forEach(s => sSel.innerHTML += `<option value="${s.id}">${s.name}</option>`);
+            const imageSection = document.getElementById('imagePromptSection');
+            const videoSection = document.getElementById('videoPromptSection');
+            const videoModelSection = document.getElementById('videoModelSection');
 
-            const pSel = document.getElementById('presetSelect');
-            engineConfig.presets.forEach(p => pSel.innerHTML += `<option value="${p.id}">${p.name}</option>`);
-
-            const adv = document.getElementById('advancedControls');
-            for (const [key, options] of Object.entries(engineConfig.advanced_controls)) {
-                let html = `<div class="control-group"><label>${key.replace('_', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</label><select id="adv_${key}">`;
-                options.forEach(opt => html += `<option value="${opt}">${opt}</option>`);
-                html += `</select></div>`;
-                adv.innerHTML += html;
+            if (mode === 'image') {
+                imageSection.style.display = 'block';
+                videoSection.classList.remove('visible');
+                videoModelSection.style.display = 'none';
+            } else if (mode === 'video') {
+                imageSection.style.display = 'none';
+                videoSection.classList.add('visible');
+                videoModelSection.style.display = 'block';
+            } else { // image+video
+                imageSection.style.display = 'block';
+                videoSection.classList.add('visible');
+                videoModelSection.style.display = 'block';
             }
 
-            lucide.createIcons();
-            updateStyleInfo();
             updatePrice();
+        }
+
+        async function init() {
+            try {
+                const res = await fetch('/api/config');
+                engineConfig = await res.json();
+                
+                const mSel = document.getElementById('modelSelect');
+                mSel.innerHTML = "";
+                
+                const groups = {
+                    "Kie AI Pro Models": ["flux-1.1-pro", "flux-dev", "midjourney-v6.1", "recraft-v3", "dalle-3", "ideogram-v2"],
+                    "Google & Others": ["nano-banana-pro", "nano-banana", "gpt-image-1.5"]
+                };
+
+                for (const [groupName, models] of Object.entries(groups)) {
+                    const group = document.createElement('optgroup');
+                    group.label = groupName;
+                    models.forEach(mId => {
+                        const m = engineConfig.image_models.find(im => im.id === mId);
+                        if (m) {
+                            const opt = document.createElement('option');
+                            opt.value = m.id;
+                            opt.text = m.name;
+                            group.appendChild(opt);
+                        }
+                    });
+                    mSel.appendChild(group);
+                }
+
+                // Video models
+                if (engineConfig.video_models_detail) {
+                    const vSel = document.getElementById('videoModelSelect');
+                    vSel.innerHTML = '';
+                    engineConfig.video_models_detail.forEach(vm => {
+                        vSel.innerHTML += `<option value="${vm.id}">${vm.name} — $${vm.cost.toFixed(2)}</option>`;
+                    });
+                }
+
+                const sSel = document.getElementById('styleSelect');
+                engineConfig.styles.forEach(s => sSel.innerHTML += `<option value="${s.id}">${s.name}</option>`);
+
+                const pSel = document.getElementById('presetSelect');
+                engineConfig.presets.forEach(p => pSel.innerHTML += `<option value="${p.id}">${p.name}</option>`);
+
+                const adv = document.getElementById('advancedControls');
+                adv.innerHTML = "";
+                engineConfig.advanced_controls_groups.forEach(group => {
+                    let groupHtml = `<div class="advanced-group-title"><i data-lucide="${group.icon}" size="14"></i><span>${group.title}</span></div><div class="advanced-group-content">`;
+                    for (const [key, options] of Object.entries(group.controls)) {
+                        groupHtml += `<div class="control-group"><label>${key.replace('_', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</label><select id="adv_${key}" class="adv-param">`;
+                        options.forEach(opt => groupHtml += `<option value="${opt}">${opt}</option>`);
+                        groupHtml += `</select></div>`;
+                    }
+                    groupHtml += `</div>`;
+                    adv.innerHTML += groupHtml;
+                });
+
+                lucide.createIcons();
+                updateStyleInfo();
+                updatePrice();
+                setMode('image'); // Initialize with image mode
+                pollPollerStatus(); // Start polling poller status
+            } catch (err) {
+                console.error("Config Load Failed:", err);
+            }
+        }
+
+        function collectParams() {
+            const params = {};
+            document.querySelectorAll('.adv-param').forEach(select => {
+                const key = select.id.replace('adv_', '');
+                params[key] = select.value;
+            });
+            return params;
         }
 
         function updateStyleInfo() {
             const styleId = document.getElementById('styleSelect').value;
             const style = engineConfig.styles.find(s => s.id === styleId);
-            document.getElementById('styleDesc').innerText = style.desc;
-            document.getElementById('stylePrompt').innerText = style.prompt;
+            if (style) {
+                document.getElementById('styleDesc').innerText = style.desc;
+                document.getElementById('stylePrompt').innerText = style.prompt;
+            }
         }
 
         function updatePrice() {
-            const modelId = document.getElementById('modelSelect').value;
-            const model = engineConfig.image_models.find(m => m.id === modelId);
-            document.getElementById('priceVal').innerText = `$${model.cost.toFixed(2)}`;
+            let total = 0;
+            if (currentMode === 'image' || currentMode === 'image+video') {
+                const modelId = document.getElementById('modelSelect').value;
+                const model = (engineConfig.image_models || []).find(m => m.id === modelId);
+                if (model) total += model.cost;
+            }
+            if (currentMode === 'video' || currentMode === 'image+video') {
+                const vModelId = document.getElementById('videoModelSelect').value;
+                const vModel = (engineConfig.video_models_detail || []).find(m => m.id === vModelId);
+                if (vModel) total += vModel.cost;
+            }
+            document.getElementById('priceVal').innerText = `$${total.toFixed(2)}`;
         }
 
         function toggleAdvanced() {
@@ -414,9 +731,293 @@
         function syncCounter() {
             document.getElementById('charCount').innerText = `${document.getElementById('promptInput').value.length} characters`;
         }
+        function syncVideoCounter() {
+            document.getElementById('videoCharCount').innerText = `${document.getElementById('videoPromptInput').value.length} characters`;
+        }
 
+        // --- Unified Produce ---
         async function produce() {
-            alert("Production Started! Processing logic live on server port 5052.");
+            const btn = document.getElementById('genBtn');
+            const status = document.getElementById('statusMsg');
+
+            const payload = {
+                mode: currentMode,
+                product: "Expert Production",
+                prompt: document.getElementById('promptInput').value,
+                video_prompt: document.getElementById('videoPromptInput').value,
+                model: document.getElementById('modelSelect').value,
+                video_model: document.getElementById('videoModelSelect').value,
+                provider: document.getElementById('providerSelect').value,
+                video_duration: document.getElementById('videoDuration').value,
+                video_quality: document.getElementById('videoQuality').value,
+                ...collectParams()
+            };
+
+            // Validation
+            if ((currentMode === 'image' || currentMode === 'image+video') && !payload.prompt) {
+                alert('Image Prompt is required!');
+                return;
+            }
+            if ((currentMode === 'video') && !payload.video_prompt) {
+                alert('Video Prompt is required!');
+                return;
+            }
+            if (currentMode === 'image+video' && !payload.video_prompt) {
+                alert('Video Prompt is required for Image + Video mode!');
+                return;
+            }
+
+            btn.disabled = true;
+            const modeLabel = currentMode === 'image' ? 'Image' : currentMode === 'video' ? 'Video' : 'Image + Video';
+            btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin"></i> Producing ${modeLabel}...`;
+            status.innerText = "Syncing with Airtable & Handshaking with Cloud Providers...";
+            lucide.createIcons();
+
+            try {
+                const res = await fetch('/api/produce', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    let msg = `<span style="color: #10b981">Production Started!</span> Sync ID: ${data.record_id}`;
+                    if (data.mode) msg += ` | Mode: ${data.mode}`;
+                    status.innerHTML = msg;
+
+                    // Start polling for result
+                    if (data.record_id) {
+                        pollResult(data.record_id);
+                    }
+                } else {
+                    status.innerText = "Error: " + data.error;
+                }
+            } catch (e) {
+                status.innerText = "Network Error - Cloud Production Time-out";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Initiate Production';
+                lucide.createIcons();
+            }
+        }
+
+        // --- Poll for result updates ---
+        async function pollResult(recordId) {
+            const stage = document.getElementById('resultStage');
+            stage.innerHTML = '<div class="poller-dot"></div><span style="font-size: 13px; margin-top: 8px;">Processing... Checking for results</span>';
+
+            let attempts = 0;
+            const maxAttempts = 120; // 10 minutes at 5s intervals
+
+            const interval = setInterval(async () => {
+                attempts++;
+                if (attempts > maxAttempts) {
+                    clearInterval(interval);
+                    stage.innerHTML = '<span style="color: #f59e0b; font-size: 12px;">⏰ Timeout — check Airtable for results</span>';
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`/api/record-status/${recordId}`);
+                    const data = await res.json();
+                    
+                    let html = '';
+                    // Show image if available
+                    if (data.image_url) {
+                        html += `<img src="${data.image_url}" alt="Generated" style="max-width: 100%; border-radius: 8px; margin-bottom: 12px;">`;
+                    }
+                    // Show video if available
+                    if (data.video_url) {
+                        html += `<video controls autoplay loop muted style="max-width: 100%; border-radius: 8px; margin-bottom: 12px;"><source src="${data.video_url}" type="video/mp4"></video>`;
+                    }
+                    
+                    // Status indicator
+                    const imgStatus = data.image_status || '';
+                    const vidStatus = data.video_status || '';
+                    
+                    if (html) {
+                        let statusLine = '<div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">';
+                        if (imgStatus) statusLine += `🖼️ ${imgStatus} `;
+                        if (vidStatus) statusLine += `🎬 ${vidStatus}`;
+                        statusLine += '</div>';
+                        stage.innerHTML = html + statusLine;
+                    }
+
+                    // Stop polling if everything is done
+                    const imgDone = !imgStatus || imgStatus === 'Generated' || imgStatus === 'Failed' || imgStatus.includes('Failed');
+                    const vidDone = !vidStatus || vidStatus === 'Generated' || vidStatus === 'Failed' || vidStatus.includes('Failed');
+                    if (imgDone && vidDone && (data.image_url || data.video_url)) {
+                        clearInterval(interval);
+                    }
+                } catch (e) {
+                    // Silently continue polling
+                }
+            }, 5000);
+        }
+
+        async function enhancePrompt() {
+            const btn = document.getElementById('enhanceBtn');
+            const promptArea = document.getElementById('promptInput');
+            const basePrompt = promptArea.value;
+
+            if (!basePrompt) {
+                alert("Please enter a basic idea first!");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin" size="10"></i> AI Enhancing...';
+            lucide.createIcons();
+
+            const payload = {
+                prompt: basePrompt,
+                ...collectParams()
+            };
+
+            try {
+                const res = await fetch('/api/enhance-prompt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.enhanced_prompt) {
+                    document.getElementById('enhancedResultContainer').style.display = 'block';
+                    document.getElementById('enhancedText').innerText = data.enhanced_prompt;
+                } else {
+                    alert("Enhancement failed: " + (data.error || "Unknown error"));
+                }
+            } catch (e) {
+                alert("AI Enhancement timed out. Please check your connection.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="sparkles" size="10"></i> Enhance';
+                lucide.createIcons();
+            }
+        }
+
+        function applyEnhanced() {
+            const enhancedText = document.getElementById('enhancedText').innerText;
+            const promptArea = document.getElementById('promptInput');
+            promptArea.value = enhancedText;
+            syncCounter();
+            document.getElementById('enhancedResultContainer').style.display = 'none';
+        }
+
+        // --- File Upload / Reference System ---
+        let selectedFiles = [];
+
+        function handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            addFiles(files);
+            event.target.value = '';
+        }
+
+        function addFiles(files) {
+            files.forEach(file => {
+                if (selectedFiles.length >= 5) return;
+                if (file.size > 200 * 1024 * 1024) {
+                    alert(`"${file.name}" is larger than 200MB and was skipped.`);
+                    return;
+                }
+                selectedFiles.push(file);
+            });
+            renderPreviews();
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            renderPreviews();
+        }
+
+        function renderPreviews() {
+            const container = document.getElementById('filePreviewContainer');
+            container.innerHTML = '';
+            const hint = document.getElementById('uploadHint');
+
+            if (selectedFiles.length === 0) {
+                hint.textContent = 'Max 200MB • AI will analyze visual context';
+                return;
+            }
+
+            hint.textContent = `${selectedFiles.length} file(s) selected • Click to add more`;
+
+            selectedFiles.forEach((file, idx) => {
+                const item = document.createElement('div');
+                item.className = 'file-preview-item';
+
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.onload = () => URL.revokeObjectURL(img.src);
+                    item.appendChild(img);
+                } else {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'file-icon-placeholder';
+                    const ext = file.name.split('.').pop().toUpperCase();
+                    placeholder.textContent = ext + '\n' + file.name.substring(0, 12);
+                    item.appendChild(placeholder);
+                }
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'file-preview-remove';
+                removeBtn.innerHTML = '✕';
+                removeBtn.onclick = (e) => { e.stopPropagation(); removeFile(idx); };
+                item.appendChild(removeBtn);
+
+                container.appendChild(item);
+            });
+        }
+
+        // Drag & Drop
+        const uploadCard = document.getElementById('uploadCard');
+        uploadCard.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadCard.classList.add('drag-over');
+        });
+        uploadCard.addEventListener('dragleave', () => {
+            uploadCard.classList.remove('drag-over');
+        });
+        uploadCard.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadCard.classList.remove('drag-over');
+            const files = Array.from(e.dataTransfer.files);
+            addFiles(files);
+        });
+
+        // --- Poller Status ---
+        async function pollPollerStatus() {
+            try {
+                const res = await fetch('/api/poller/status');
+                const data = await res.json();
+                const dot = document.getElementById('pollerDot');
+                const statusEl = document.getElementById('pollerStatus');
+                const toggleBtn = document.getElementById('pollerToggleBtn');
+
+                if (data.running) {
+                    dot.classList.remove('off');
+                    statusEl.textContent = `Poller: Active | Last: ${data.last_scan || 'never'} | Processed: ${data.total_processed || 0}`;
+                    toggleBtn.textContent = 'Pause';
+                } else {
+                    dot.classList.add('off');
+                    statusEl.textContent = 'Poller: Paused';
+                    toggleBtn.textContent = 'Start';
+                }
+            } catch (e) {
+                document.getElementById('pollerStatus').textContent = 'Poller: Offline';
+                document.getElementById('pollerDot').classList.add('off');
+            }
+            // Poll every 10 seconds
+            setTimeout(pollPollerStatus, 10000);
+        }
+
+        async function togglePoller() {
+            try {
+                await fetch('/api/poller/toggle', { method: 'POST' });
+                setTimeout(pollPollerStatus, 500);
+            } catch (e) {
+                console.error('Toggle failed:', e);
+            }
         }
 
         init();

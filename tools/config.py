@@ -43,7 +43,13 @@ COSTS = {
     ("nano-banana", "kie"): 0.09,
     ("nano-banana-pro", "google"): 0.13,
     ("nano-banana-pro", "kie"): 0.09,
-    ("gpt-image-1.5", "wavespeed"): 0.07,  # ~$0.04 medium / ~$0.08 high via OpenAI — verify at wavespeed.ai
+    ("gpt-image-1.5", "wavespeed"): 0.07,
+    ("flux-1.1-pro", "kie"): 0.05,
+    ("flux-dev", "kie"): 0.03,
+    ("midjourney-v6.1", "kie"): 0.15,
+    ("recraft-v3", "kie"): 0.08,
+    ("dalle-3", "kie"): 0.12,
+    ("ideogram-v2", "kie"): 0.10,
     # Video models
     ("veo-3.1", "google"): 0.50,
     ("kling-3.0", "kie"): 0.30,

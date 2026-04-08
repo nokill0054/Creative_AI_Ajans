@@ -29,6 +29,30 @@ IMAGE_PROVIDERS = {
         "default": "wavespeed",
         "providers": {"wavespeed": wavespeed},
     },
+    "flux-1.1-pro": {
+        "default": "kie",
+        "providers": {"kie": kie},
+    },
+    "flux-dev": {
+        "default": "kie",
+        "providers": {"kie": kie},
+    },
+    "midjourney-v6.1": {
+        "default": "kie",
+        "providers": {"kie": kie},
+    },
+    "recraft-v3": {
+        "default": "kie",
+        "providers": {"kie": kie},
+    },
+    "dalle-3": {
+        "default": "kie",
+        "providers": {"kie": kie},
+    },
+    "ideogram-v2": {
+        "default": "kie",
+        "providers": {"kie": kie},
+    },
 }
 
 # --- Video model registry ---

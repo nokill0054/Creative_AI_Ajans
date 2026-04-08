@@ -60,7 +60,10 @@ def create_ugc_table():
                 "options": {
                     "choices": [
                         {"name": "Pending", "color": "yellowBright"},
+                        {"name": "Processing", "color": "blueBright"},
                         {"name": "Generated", "color": "cyanBright"},
+                        {"name": "Failed", "color": "redBright"},
+                        {"name": "Failed - Quota", "color": "red"},
                         {"name": "Approved", "color": "greenBright"},
                         {"name": "Rejected", "color": "redBright"},
                     ]
@@ -87,7 +90,10 @@ def create_ugc_table():
                 "options": {
                     "choices": [
                         {"name": "Pending", "color": "yellowBright"},
+                        {"name": "Processing", "color": "blueBright"},
                         {"name": "Generated", "color": "cyanBright"},
+                        {"name": "Failed", "color": "redBright"},
+                        {"name": "Failed - Quota", "color": "red"},
                         {"name": "Approved", "color": "greenBright"},
                         {"name": "Rejected", "color": "redBright"},
                     ]
@@ -166,6 +172,78 @@ def add_image_model_field():
         raise Exception(f"Airtable API error ({response.status_code}): {response.text}")
 
 
+def sync_status_fields():
+    """
+    Push current status field choices (Pending, Processing, Failed, etc.) 
+    to the Airtable base schema using Metadata API.
+    
+    Requires 'schema.bases:write' scope on the PAT.
+    """
+    # 1. Get Table Metadata
+    meta_url = f"https://api.airtable.com/v0/meta/bases/{config.AIRTABLE_BASE_ID}/tables"
+    resp = requests.get(meta_url, headers=_headers())
+    if resp.status_code != 200:
+        raise Exception(f"Failed to list tables: {resp.text}")
+
+    tables = resp.json().get("tables", [])
+    table = next((t for t in tables if t["name"] == config.AIRTABLE_TABLE_NAME), None)
+    if not table:
+        raise Exception(f"Table '{config.AIRTABLE_TABLE_NAME}' not found")
+
+    table_id = table["id"]
+    fields = table.get("fields", [])
+
+    # Status configurations
+    status_choices = [
+        {"name": "Pending", "color": "yellowBright"},
+        {"name": "Processing", "color": "blueBright"},
+        {"name": "Generated", "color": "cyanBright"},
+        {"name": "Failed", "color": "redBright"},
+        {"name": "Failed - Quota", "color": "red"},
+        {"name": "Approved", "color": "greenBright"},
+        {"name": "Rejected", "color": "redBright"},
+    ]
+
+    field_names = ["Image Status", "Video Status"]
+    updated = []
+
+    for field_name in field_names:
+        field = next((f for f in fields if f["name"] == field_name), None)
+        if not field:
+            print_status(f"Field '{field_name}' not found - skipping", "!!")
+            continue
+
+        field_id = field["id"]
+        patch_url = f"https://api.airtable.com/v0/meta/bases/{config.AIRTABLE_BASE_ID}/tables/{table_id}/fields/{field_id}"
+        
+        # Metadata API: PATCH field options
+        payload = {
+            "options": {
+                "choices": status_choices
+            }
+        }
+        
+        response = requests.patch(patch_url, headers=_headers(), json=payload)
+        if response.status_code == 200:
+            print_status(f"Synchronized choices for '{field_name}' (ID: {field_id})", "OK")
+            updated.append(field_name)
+        else:
+            # Try once more without colors if it failed - Metadata API sometimes rejects certain color names
+            payload_no_color = {
+                "options": {
+                    "choices": [{"name": c["name"]} for c in status_choices]
+                }
+            }
+            response = requests.patch(patch_url, headers=_headers(), json=payload_no_color)
+            if response.status_code == 200:
+                print_status(f"Synchronized choices for '{field_name}' (no colors)", "OK")
+                updated.append(field_name)
+            else:
+                raise Exception(f"Failed to sync '{field_name}': {response.text}")
+
+    return updated
+
+
 # --- Record CRUD ---
 
 
@@ -182,7 +260,7 @@ def create_record(fields):
     response = requests.post(
         _table_url(),
         headers=_headers(),
-        json={"fields": fields},
+        json={"fields": fields, "typecast": True},
     )
 
     if response.status_code != 200:
@@ -212,7 +290,7 @@ def create_records_batch(records_fields):
         response = requests.post(
             _table_url(),
             headers=_headers(),
-            json={"records": records},
+            json={"records": records, "typecast": True},
         )
 
         if response.status_code != 200:
@@ -274,7 +352,7 @@ def update_record(record_id, fields):
     """
     url = f"{_table_url()}/{record_id}"
 
-    response = requests.patch(url, headers=_headers(), json={"fields": fields})
+    response = requests.patch(url, headers=_headers(), json={"fields": fields, "typecast": True})
 
     if response.status_code != 200:
         raise Exception(f"Airtable update failed: {response.text}")
